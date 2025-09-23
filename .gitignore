@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Models (too large)
+models/
+*.bin
+*.pt
+*.pth
+
+# Data
+data/
+logs/
+
+# IDE
+.vscode/
+.idea/
+
+# Mac
+.DS_Store
+.AppleDouble
+.LSOverride
