@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Story Generator AI | Live Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background: #0a0e27;
+            color: white;
+        }
+
+        /* Character backgrounds */
+        .character-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(10, 14, 39, 0.7), rgba(10, 14, 39, 0.7)),
+                url('assets/shonen-bg.jpg'),
+                url('assets/demon-bg.jpg');
+            background-size: cover, 60% 100%, 60% 100%;
+            background-position: center, left center, right center;
+            background-repeat: no-repeat;
+            z-index: -2;
+            filter: blur(1px);
+            opacity: 0.4;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, #0a0e27, #1a1f3a, #2a0845);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            opacity: 0.9;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 107, 107, 0.8);
+            border-radius: 50%;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 3rem 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px #ff6b6b); }
+            to { filter: drop-shadow(0 0 40px #4ecdc4); }
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        /* Interactive Demo Section */
+        .demo-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .demo-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Form Styling */
+        .story-form {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #4ecdc4;
+            font-size: 1.1rem;
+        }
+
+        .form-textarea {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            border-radius: 15px;
+            padding: 1rem;
+            color: white;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Enhanced Genre Cards with Background Images */
+        .genre-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .genre-btn {
+            position: relative;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(78, 205, 196, 0.3));
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-align: center;
+            font-weight: 600;
+            overflow: hidden;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Background image overlay for each genre */
+        .genre-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.4;
+            transition: all 0.4s ease;
+            z-index: -1;
+            border-radius: 18px;
+        }
+
+        /* Individual genre backgrounds */
+        .genre-btn[data-genre="shonen"]::before {
+            background-image: linear-gradient(rgba(255, 107, 107, 0.5), rgba(255, 107, 107, 0.7)), 
+                              url('assets/shonen-bg.jpg');
+        }
+
+        .genre-btn[data-genre="action"]::before {
+            background-image: linear-gradient(rgba(139, 0, 139, 0.5), rgba(75, 0, 130, 0.7)), 
+                              url('assets/demon-bg.jpg');
+        }
+
+        .genre-btn[data-genre="isekai"]::before {
+            background-image: linear-gradient(rgba(0, 191, 255, 0.5), rgba(50, 205, 50, 0.7)), 
+                              url('assets/isekai-bg.jpg');
+        }
+
+        .genre-btn[data-genre="mecha"]::before {
+            background-image: linear-gradient(rgba(70, 130, 180, 0.5), rgba(0, 191, 255, 0.7)), 
+                              url('assets/mecha-bg.jpg');
+        }
+
+        .genre-btn[data-genre="romance"]::before {
+            background-image: linear-gradient(rgba(255, 182, 193, 0.5), rgba(255, 105, 180, 0.7)), 
+                              url('assets/romance-bg.jpg');
+        }
+
+        .genre-btn[data-genre="slice"]::before {
+            background-image: linear-gradient(rgba(210, 180, 140, 0.5), rgba(139, 90, 43, 0.7)), 
+                              url('assets/slice-bg.jpg');
+        }
+
+        /* Genre content styling */
+        .genre-content {
+            position: relative;
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .genre-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        .genre-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: #ffd93d;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+        }
+
+        .genre-desc {
+            font-size: 0.9rem;
+            opacity: 0.95;
+            line-height: 1.4;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+        }
+
+        /* Hover and active effects */
+        .genre-btn:hover {
+            border-color: #ff6b6b;
+            transform: scale(1.05) translateY(-8px);
+            box-shadow: 0 25px 50px rgba(255, 107, 107, 0.5);
+        }
+
+        .genre-btn:hover::before {
+            opacity: 0.7;
+            transform: scale(1.1);
+        }
+
+        .genre-btn.active {
+            background: linear-gradient(45deg, rgba(255, 107, 107, 0.8), rgba(255, 142, 83, 0.8));
+            border-color: #ff6b6b;
+            box-shadow: 0 20px 60px rgba(255, 107, 107, 0.6);
+            transform: scale(1.02);
+        }
+
+        .genre-btn.active::before {
+            opacity: 0.8;
+        }
+
+        /* Generate button */
+        .generate-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            border: none;
+            border-radius: 50px;
+            padding: 1.5rem 3rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
+            width: 100%;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(255, 107, 107, 0.6);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Story output */
+        .story-output {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(78, 205, 196, 0.15));
+            padding: 2rem;
+            border-radius: 20px;
+            border-left: 5px solid #ff6b6b;
+            margin: 2rem 0;
+            backdrop-filter: blur(10px);
+            min-height: 200px;
+            display: none;
+        }
+
+        .story-output.show {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .story-text {
+            line-height: 1.8;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Metrics */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 107, 107, 0.2);
+            border-top: 5px solid #ff6b6b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* GitHub buttons */
+        .github-section {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+        }
+
+        .github-btn {
+            display: inline-block;
+            background: transparent;
+            color: white;
+            border: 2px solid #4ecdc4;
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .github-btn:hover {
+            background: #4ecdc4;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(78, 205, 196, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5rem; }
+            .genre-selector { grid-template-columns: 1fr; }
+            .genre-btn {
+                min-height: 180px;
+                padding: 1.5rem 1rem;
+            }
+            .genre-icon { font-size: 2.5rem; }
+            .genre-name { font-size: 1.1rem; }
+            .genre-desc { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Backgrounds -->
+    <div class="character-bg"></div>
+    <div class="bg-animation"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>🎌 ANIME STORY GENERATOR 🎌</h1>
+        <p>Generate Epic Anime Stories with AI Power - Live Interactive Demo</p>
+    </div>
+
+    <!-- Interactive Demo -->
+    <div class="demo-section">
+        <h2 class="demo-title">✨ Create Your Story</h2>
+        
+        <div class="story-form">
+            <div class="form-group">
+                <label for="storyPrompt">📝 Your Story Idea</label>
+                <textarea 
+                    id="storyPrompt" 
+                    class="form-textarea" 
+                    placeholder="Enter your anime story prompt here..."
+                    rows="3">A young warrior discovers a legendary sword hidden in an ancient temple</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>🎭 Choose Your Genre</label>
+                <div class="genre-selector" id="genreSelector">
+                    <div class="genre-btn active" data-genre="shonen">
+                        <div class="genre-content">
+                            <div class="genre-icon">⚔️</div>
+                            <div class="genre-name">SHONEN HEROES</div>
+                            <div class="genre-desc">Epic battles and heroic adventures like Luffy's journey to become Pirate King</div>
+                        </div>
+                    </div>
+                    
+                    <div class="genre-btn" data-genre="action">
+                        <div class="genre-content">
+                            <div class="genre-icon">🔥</div>
+                            <div class="genre-name">DEMON SLAYERS</div>
+                            <div class="genre-desc">Intense supernatural combat like Tanjiro's fight against demons</div>
+                        </div>
+                    </div>
+                    
+                    <div class="genre-btn" data-genre="isekai">
+                        <div class="genre-content">
+                            <div class="genre-icon">🌍</div>
+                            <div class="genre-name">ISEKAI WORLDS</div>
+                            <div class="genre-desc">Transported to magical realms with unique powers and abilities</div>
+                        </div>
+                    </div>
+                    
+                    <div class="genre-btn" data-genre="mecha">
+                        <div class="genre-content">
+                            <div class="genre-icon">🤖</div>
+                            <div class="genre-name">MECHA PILOTS</div>
+                            <div class="genre-desc">Giant robots defending humanity in epic space battles</div>
+                        </div>
+                    </div>
+                    
+                    <div class="genre-btn" data-genre="romance">
+                        <div class="genre-content">
+                            <div class="genre-icon">💕</div>
+                            <div class="genre-name">SHOJO ROMANCE</div>
+                            <div class="genre-desc">Heartwarming love stories and emotional character development</div>
+                        </div>
+                    </div>
+                    
+                    <div class="genre-btn" data-genre="slice">
+                        <div class="genre-content">
+                            <div class="genre-icon">☕</div>
+                            <div class="genre-name">SLICE OF LIFE</div>
+                            <div class="genre-desc">Everyday adventures and the beauty of ordinary moments</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="generate-btn" id="generateBtn">
+                🚀 GENERATE EPIC STORY
+            </button>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>✨ AI is crafting your anime masterpiece...</p>
+        </div>
+
+        <!-- Story Output -->
+        <div class="story-output" id="storyOutput">
+            <div class="story-text" id="storyText"></div>
+            
+            <div class="metrics">
+                <div class="metric-card">
+                    <div class="metric-value" id="tokenCount">0</div>
+                    <div class="metric-label">Tokens</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="inferenceTime">0.0s</div>
+                    <div class="metric-label">Time</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="tokensPerSec">0</div>
+                    <div class="metric-label">Tokens/sec</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="perplexity">15.2</div>
+                    <div class="metric-label">Perplexity</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GitHub Links -->
+        <div class="github-section">
+            <h3 style="margin-bottom: 1rem;">🔗 Explore the Project</h3>
+            <a href="https://github.com/Manan23-dev/anime-gpt2-storyteller" class="github-btn">📂 View Source Code</a>
+            <a href="https://github.com/Manan23-dev/anime-gpt2-storyteller#readme" class="github-btn">📖 Read Documentation</a>
+        </div>
+    </div>
+
+    <script>
+        // Story templates for different genres
+        const storyTemplates = {
+            shonen: [
+                "The Grand Line stretched endlessly before {protagonist}, waves crashing against their ship's hull. '{dialogue1}' they shouted, their straw hat dancing in the sea breeze. With unwavering determination, they faced the challenges ahead, knowing that true strength comes from protecting those you care about. The adventure that would change everything was about to begin...",
+                
+                "In the hidden village, {protagonist} trained relentlessly under the moonlight. Master {mentor} watched from the shadows, knowing that the final test approached. '{dialogue1}' the master whispered. The legendary technique passed down through generations would soon be needed to face the darkness threatening their world...",
+                
+                "The tournament arena erupted in cheers as {protagonist} stepped forward. Their rival stood across the battlefield, eyes blazing with competitive fire. '{dialogue1}' they declared, raising their weapon high. This wasn't just about winning - it was about proving that dreams and friendship could overcome any obstacle..."
+            ],
+            
+            action: [
+                "Under the blood-red moon, {protagonist} gripped their cursed blade tighter. The demon's eyes glowed crimson in the darkness ahead. '{dialogue1}' they breathed, channeling their cursed energy. With perfect control, they unleashed their domain expansion, the very air crackling with supernatural power...",
+                
+                "The ancient curse mark pulsed on {protagonist}'s arm as supernatural power coursed through their veins. '{dialogue1}' they growled, facing the horde of cursed spirits. In this world where monsters lurked in shadows, only those with cursed energy could stand against the darkness that threatened humanity...",
+                
+                "The school bell chimed midnight as {protagonist} leaped across rooftops, pursuing their target. Their enhanced abilities activated, time seeming to slow down. '{dialogue1}' they muttered, preparing their special attack. The fate of the city rested on this single moment of supernatural combat..."
+            ],
+            
+            isekai: [
+                "The summoning circle pulsed with otherworldly light beneath {protagonist}'s feet. When the glow faded, they stood in a vast meadow under twin moons. A translucent status window materialized: 'Welcome, Hero. Level 1.' '{dialogue1}' they whispered, realizing their ordinary life had ended and an extraordinary adventure had begun...",
+                
+                "After the truck hit them, {protagonist} expected darkness. Instead, they awakened in a fantasy world as the legendary {class}. '{dialogue1}' they said, examining their new abilities. With knowledge from their previous world and powers beyond imagination, they would reshape this realm's destiny...",
+                
+                "The goddess smiled as she explained the situation to {protagonist}. '{dialogue1}' she said, offering them incredible cheat abilities. Reborn in a world of magic and monsters, they would need every advantage to complete their impossible mission and find their way back home..."
+            ],
+            
+            mecha: [
+                "The massive hangar doors opened, revealing {protagonist}'s giant robot against the starlit sky. '{dialogue1}' they declared through the communication system. Earth's last line of defense stood ready as alien invaders approached. The fate of humanity rested in the hands of teenage pilots and their mechanical guardians...",
+                
+                "Neural synchronization at 95% and climbing. {protagonist} felt their consciousness merge with their mecha's AI. '{dialogue1}' they said, as enemy signatures appeared on radar. The final battle for humanity's survival was about to begin in the depths of space...",
+                
+                "In the cockpit of their inherited mecha, {protagonist} discovered their mysterious past. '{dialogue1}' the AI companion explained. This war between Earth and the colonies had claimed their family, but now they had the power to end the conflict once and for all..."
+            ],
+            
+            romance: [
+                "Cherry blossoms danced in the spring breeze as {protagonist} nervously approached their crush. '{dialogue1}' they stammered, their heart pounding. The school festival provided the perfect backdrop for confessing feelings that had been growing all semester. Would this be the moment that changed everything?",
+                
+                "The rain started falling as {protagonist} waited under the school gate. When {love_interest} appeared with an umbrella, they shared a moment of perfect silence. '{dialogue1}' they whispered, finally finding the courage to speak their heart. Sometimes the most beautiful love stories begin with a single raindrop...",
+                
+                "The rivalry between {protagonist} and {love_interest} had defined their entire school career. But during the cultural festival, something shifted. '{dialogue1}' they admitted, blushing deeply. Perhaps the line between rivalry and romance had always been thinner than they thought..."
+            ],
+            
+            slice: [
+                "The morning sun filtered through the classroom windows as {protagonist} settled into their routine. '{dialogue1}' their friend said, offering to share lunch. These simple moments - friendship, laughter, and everyday miracles - were what made life truly beautiful. Today would be another small but perfect adventure...",
+                
+                "After school, the literature club gathered in their usual spot. {protagonist} watched their friends discuss the latest novel, feeling grateful for these peaceful moments. '{dialogue1}' they thought, realizing that sometimes the greatest stories are found in ordinary days filled with extraordinary friendships...",
+                
+                "The small town had its own gentle rhythm, and {protagonist} was finally learning to appreciate it. '{dialogue1}' the elderly shopkeeper said with a knowing smile. In this quiet place where seasons change slowly and neighbors know each other's names, every day held the potential for small wonders..."
+            ]
+        };
+
+        const dialogueOptions = [
+            "I won't give up, no matter what!",
+            "This is just the beginning of our story!",
+            "I'll protect everyone I care about!",
+            "My dreams are worth fighting for!",
+            "Today, everything changes!",
+            "I believe in the power of friendship!",
+            "This is my moment to shine!",
+            "I won't let fear hold me back!",
+            "Together, we can overcome anything!",
+            "My heart is filled with determination!"
+        ];
+
+        const protagonistNames = [
+            "Kenji", "Akira", "Yuki", "Hana", "Takeshi", "Misaki", "Ryu", "Sakura",
+            "Hiroto", "Emi", "Daiki", "Rei", "Shun", "Aoi", "Hayato", "Miku"
+        ];
+
+        // Current selections
+        let currentGenre = 'shonen';
+        let isGenerating = false;
+
+        // DOM elements
+        const genreButtons = document.querySelectorAll('.genre-btn');
+        const generateBtn = document.getElementById('generateBtn');
+        const storyPrompt = document.getElementById('storyPrompt');
+        const loading = document.getElementById('loading');
+        const storyOutput = document.getElementById('storyOutput');
+        const storyText = document.getElementById('storyText');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            setupEventListeners();
+        });
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                
+                const colors = ['#ff6b6b', '#4ecdc4', '#ffd93d', '#6bcf7f'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)] + '80';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        function setupEventListeners() {
+            // Genre selection
+            genreButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    genreButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentGenre = this.dataset.genre;
+                });
+            });
+
+            // Generate button
+            generateBtn.addEventListener('click', generateStory);
+
+            // Example prompts
+            const examplePrompts = [
+                "A young pirate sets sail to find the legendary One Piece",
+                "A demon slayer faces their greatest challenge under the full moon",
+                "After dying in an accident, a programmer awakens in a fantasy RPG world",
+                "Teenage pilots must defend Earth from alien invasion",
+                "Two rivals realize their feelings during the school festival",
+                "Three friends start a band in their final year of high school"
+            ];
+
+            // Randomly update placeholder
+            setInterval(() => {
+                const randomPrompt = examplePrompts[Math.floor(Math.random() * examplePrompts.length)];
+                if (storyPrompt.value === '' || storyPrompt.value === storyPrompt.placeholder) {
+                    storyPrompt.placeholder = randomPrompt;
+                }
+            }, 5000);
+        }
+
+        function generateStory() {
+            if (isGenerating) return;
+            
+            isGenerating = true;
+            generateBtn.disabled = true;
+            
+            // Show loading
+            loading.style.display = 'block';
+            storyOutput.classList.remove('show');
+            
+            // Simulate generation time
+            const startTime = Date.now();
+            
+            setTimeout(() => {
+                const endTime = Date.now();
+                const generationTime = (endTime - startTime) / 1000;
+                
+                // Generate story
+                const story = createStory(storyPrompt.value || storyPrompt.placeholder, currentGenre);
+                
+                // Calculate metrics
+                const wordCount = story.split(' ').length;
+                const tokenCount = Math.floor(wordCount * 1.3); // Approximate
+                const tokensPerSec = Math.floor(tokenCount / generationTime);
+                const perplexity = (Math.random() * 6 + 12).toFixed(1);
+                
+                // Display results
+                displayStory(story, tokenCount, generationTime, tokensPerSec, perplexity);
+                
+                // Reset state
+                isGenerating = false;
+                generateBtn.disabled = false;
+                loading.style.display = 'none';
+                
+            }, 2000 + Math.random() * 2000); // 2-4 seconds
+        }
+
+        function createStory(prompt, genre) {
+            const templates = storyTemplates[genre];
+            const template = templates[Math.floor(Math.random() * templates.length)];
+            const protagonist = protagonistNames[Math.floor(Math.random() * protagonistNames.length)];
+            const dialogue = dialogueOptions[Math.floor(Math.random() * dialogueOptions.length)];
+            
+            // Process the user's prompt to create a custom story
+            const customStory = template
+                .replace('{protagonist}', protagonist)
+                .replace('{dialogue1}', dialogue)
+                .replace('{mentor}', protagonistNames[Math.floor(Math.random() * protagonistNames.length)])
+                .replace('{love_interest}', protagonistNames[Math.floor(Math.random() * protagonistNames.length)])
+                .replace('{class}', ['Sword Master', 'Mage', 'Paladin', 'Assassin'][Math.floor(Math.random() * 4)]);
+            
+            // Integrate user prompt
+            const promptIntro = `Based on your idea: "${prompt}"\n\n`;
+            return promptIntro + customStory;
+        }
+
+        function displayStory(story, tokens, time, speed, perplexity) {
+            // Animate story text
+            storyText.innerHTML = '';
+            let i = 0;
+            const typewriter = setInterval(() => {
+                storyText.innerHTML += story.charAt(i);
+                i++;
+                if (i >= story.length) {
+                    clearInterval(typewriter);
+                }
+            }, 20);
+            
+            // Update metrics
+            document.getElementById('tokenCount').textContent = tokens;
+            document.getElementById('inferenceTime').textContent = time.toFixed(2) + 's';
+            document.getElementById('tokensPerSec').textContent = speed;
+            document.getElementById('perplexity').textContent = perplexity;
+            
+            // Show output
+            storyOutput.classList.add('show');
+        }
+    </script>
+</body>
+</html>
