@@ -13,24 +13,273 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for anime theme
+# Enhanced CSS inspired by GitHub pages
 st.markdown("""
 <style>
-    .main {
-        background: linear-gradient(135deg, #0a0e27, #1a1f3a, #2a0845);
-        color: white;
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
     
     .stApp {
-        background: linear-gradient(135deg, #0a0e27, #1a1f3a, #2a0845);
+        font-family: 'Poppins', sans-serif;
+        background: #0a0e27;
+        color: white;
+        overflow-x: hidden;
     }
     
-    .story-container {
-        background: rgba(255, 107, 107, 0.1);
+    .main .block-container {
+        padding: 0;
+        max-width: 100%;
+    }
+    
+    /* Animated background */
+    .stApp::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, #0a0e27, #1a1f3a, #2a0845);
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+        opacity: 0.9;
+        z-index: -1;
+    }
+    
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    /* Floating particles */
+    .stApp::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(circle at 20% 20%, rgba(255, 107, 107, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(78, 205, 196, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 40% 60%, rgba(255, 217, 61, 0.2) 0%, transparent 50%);
+        animation: particleFloat 20s ease-in-out infinite;
+        z-index: -1;
+    }
+    
+    @keyframes particleFloat {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
+    }
+    
+    /* Header styling */
+    .main-header {
+        text-align: center;
+        padding: 3rem 2rem;
+        position: relative;
+        z-index: 10;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 2rem;
+    }
+    
+    .main-header h1 {
+        font-size: 4rem;
+        font-weight: 900;
+        background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        animation: glow 2s ease-in-out infinite alternate;
+        text-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+    }
+    
+    @keyframes glow {
+        from { filter: drop-shadow(0 0 20px #ff6b6b); }
+        to { filter: drop-shadow(0 0 40px #4ecdc4); }
+    }
+    
+    .main-header p {
+        font-size: 1.3rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+    }
+    
+    /* Main content container */
+    .main-content {
+        max-width: 1200px;
+        margin: 0 auto;
         padding: 2rem;
-        border-radius: 15px;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(15px);
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        z-index: 10;
+    }
+    
+    /* Story form styling */
+    .story-form {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 2rem;
+        border-radius: 20px;
+        border: 2px solid rgba(255, 107, 107, 0.3);
+        margin-bottom: 2rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    .story-form:hover {
+        border-color: #ff6b6b;
+        box-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+    }
+    
+    /* Genre selector */
+    .genre-selector {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .genre-card {
+        position: relative;
+        background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(78, 205,196, 0.3));
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 2rem 1.5rem;
+        color: white;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        text-align: center;
+        font-weight: 600;
+        overflow: hidden;
+        min-height: 220px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        backdrop-filter: blur(10px);
+    }
+    
+    .genre-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 0.4;
+        transition: all 0.4s ease;
+        z-index: -1;
+        border-radius: 18px;
+    }
+    
+    .genre-card:hover {
+        border-color: #ff6b6b;
+        transform: scale(1.05) translateY(-8px);
+        box-shadow: 0 25px 50px rgba(255, 107, 107, 0.5);
+    }
+    
+    .genre-card:hover::before {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+    
+    .genre-card.selected {
+        background: linear-gradient(45deg, rgba(255, 107, 107, 0.8), rgba(255, 142, 83, 0.8));
+        border-color: #ff6b6b;
+        box-shadow: 0 20px 60px rgba(255, 107, 107, 0.6);
+        transform: scale(1.02);
+    }
+    
+    .genre-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    }
+    
+    .genre-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        color: #ffd93d;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+    }
+    
+    .genre-desc {
+        font-size: 0.9rem;
+        opacity: 0.95;
+        line-height: 1.4;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+    }
+    
+    /* Generate button */
+    .generate-btn {
+        background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+        border: none;
+        border-radius: 50px;
+        padding: 1.5rem 3rem;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
+        width: 100%;
+        margin-top: 2rem;
+    }
+    
+    .generate-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 50px rgba(255, 107, 107, 0.6);
+    }
+    
+    .generate-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    /* Story output */
+    .story-output {
+        background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(78, 205, 196, 0.15));
+        padding: 2rem;
+        border-radius: 20px;
         border-left: 5px solid #ff6b6b;
-        margin: 1rem 0;
+        margin: 2rem 0;
+        backdrop-filter: blur(10px);
+        min-height: 200px;
+        animation: fadeInUp 0.5s ease;
+    }
+    
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .story-text {
+        line-height: 1.8;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Metrics */
+    .metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
     }
     
     .metric-card {
@@ -39,26 +288,93 @@ st.markdown("""
         border-radius: 10px;
         text-align: center;
         border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
     }
     
-    .genre-card {
-        background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(78, 205, 196, 0.3));
-        padding: 1.5rem;
+    .metric-value {
+        font-size: 2rem;
+        font-weight: 900;
+        background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .metric-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin-top: 0.5rem;
+    }
+    
+    /* Loading animation */
+    .loading {
+        text-align: center;
+        padding: 2rem;
+        font-size: 1.2rem;
+    }
+    
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(255, 107, 107, 0.2);
+        border-top: 5px solid #ff6b6b;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Sidebar styling */
+    .css-1d391kg {
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(15px);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Input styling */
+    .stTextArea textarea {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 107, 107, 0.3);
         border-radius: 15px;
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        margin: 0.5rem 0;
-        cursor: pointer;
+        color: white;
+        font-size: 1rem;
+        backdrop-filter: blur(10px);
         transition: all 0.3s ease;
     }
     
-    .genre-card:hover {
+    .stTextArea textarea:focus {
         border-color: #ff6b6b;
-        transform: scale(1.02);
+        box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
     }
     
-    .genre-card.selected {
-        background: linear-gradient(45deg, rgba(255, 107, 107, 0.8), rgba(255, 142, 83, 0.8));
-        border-color: #ff6b6b;
+    /* Slider styling */
+    .stSlider .stSlider {
+        background: rgba(255, 107, 107, 0.3);
+    }
+    
+    /* Radio button styling */
+    .stRadio > div {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .main-header h1 { font-size: 2.5rem; }
+        .genre-selector { grid-template-columns: 1fr; }
+        .genre-card {
+            min-height: 180px;
+            padding: 1.5rem 1rem;
+        }
+        .genre-icon { font-size: 2.5rem; }
+        .genre-name { font-size: 1.1rem; }
+        .genre-desc { font-size: 0.85rem; }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -184,7 +500,7 @@ class AnimeStoryGenerator:
             payload = {
                 "inputs": prompt,
                 "parameters": {
-                    "max_length": max_length,
+                    "max_length": max_length + 200,
                     "temperature": 0.8,
                     "top_p": 0.95,
                     "do_sample": True,
@@ -267,7 +583,7 @@ class AnimeStoryGenerator:
                         "content": f"Write an anime {genre} story based on this prompt: {prompt}. Make it engaging and authentic to the genre."
                     }
                 ],
-                "max_tokens": 300,
+                "max_tokens": 800,
                 "temperature": 0.8
             }
             
@@ -299,7 +615,7 @@ class AnimeStoryGenerator:
             
             payload = {
                 "model": "claude-3-5-sonnet-20241022",
-                "max_tokens": 300,
+                "max_tokens": 800,
                 "messages": [
                     {
                         "role": "user", 
@@ -337,7 +653,7 @@ class AnimeStoryGenerator:
             payload = {
                 "inputs": f"<s>[INST] Write an anime {genre} story based on: {prompt} [/INST]",
                 "parameters": {
-                    "max_length": 300,
+                    "max_length": 500,
                     "temperature": 0.8,
                     "top_p": 0.95,
                     "do_sample": True,
@@ -370,14 +686,14 @@ class AnimeStoryGenerator:
         """Generate a fallback story using templates when APIs fail"""
         templates = {
             "shonen": [
-                "The sun rose over Tokyo as {protagonist} prepared for their greatest challenge. '{dialogue}' they shouted, gripping their weapon tightly. With unwavering determination, they faced the trials ahead, knowing that true strength comes from protecting those you care about.",
-                "In the hidden village, {protagonist} trained relentlessly under the moonlight. Master {mentor} watched from the shadows, knowing that the final test approached. '{dialogue}' the master whispered. The legendary technique would soon be needed.",
-                "The tournament arena erupted in cheers as {protagonist} stepped forward. Their rival stood across the battlefield, eyes blazing with competitive fire. '{dialogue}' they declared, raising their weapon high."
+                "The sun rose over Tokyo as {protagonist} prepared for their greatest challenge. The city stretched endlessly before them, filled with both danger and opportunity. '{dialogue}' they shouted, gripping their weapon tightly. With unwavering determination, they faced the trials ahead, knowing that true strength comes from protecting those you care about. The journey would test not just their physical abilities, but their resolve and the bonds they had forged with their friends. Every step forward was a step toward becoming the hero they were destined to be. The wind carried whispers of ancient legends, stories of warriors who had walked this same path centuries ago, each one leaving behind a legacy of courage and sacrifice.",
+                "In the hidden village, {protagonist} trained relentlessly under the moonlight. Master {mentor} watched from the shadows, knowing that the final test approached. '{dialogue}' the master whispered. The legendary technique would soon be needed. Years of preparation had led to this moment, where ancient wisdom would be passed down to the next generation. The technique wasn't just about power—it was about understanding the responsibility that came with great strength and using it to protect the innocent. The training had been grueling, pushing {protagonist} beyond their limits, but each drop of sweat and every moment of pain had been worth it for this chance to carry on the village's sacred tradition.",
+                "The tournament arena erupted in cheers as {protagonist} stepped forward. Their rival stood across the battlefield, eyes blazing with competitive fire. '{dialogue}' they declared, raising their weapon high. This wasn't just about winning—it was about proving that dreams and friendship could overcome any obstacle. The crowd held their breath as the two warriors prepared for the ultimate showdown, each carrying the hopes and dreams of everyone who believed in them. The arena had witnessed countless battles, but this one felt different. It was more than a competition; it was a testament to the power of determination and the unbreakable bonds of friendship that had brought them this far."
             ],
             "isekai": [
-                "The summoning circle pulsed with otherworldly light beneath {protagonist}'s feet. When the glow faded, they stood in a vast meadow under twin moons. '{dialogue}' they whispered, realizing their ordinary life had ended.",
-                "After the accident, {protagonist} expected darkness. Instead, they awakened in a fantasy world as the legendary {class}. '{dialogue}' they said, examining their new abilities.",
-                "The goddess smiled as she explained the situation to {protagonist}. '{dialogue}' she said, offering them incredible cheat abilities."
+                "The summoning circle pulsed with otherworldly light beneath {protagonist}'s feet. When the glow faded, they stood in a vast meadow under twin moons. '{dialogue}' they whispered, realizing their ordinary life had ended. The air itself felt different here, charged with magical energy that made their skin tingle. Strange creatures roamed the landscape, and in the distance, they could see towering castles and floating islands that defied the laws of physics. This was no ordinary fantasy world—it was a realm where magic was as common as breathing, and where their modern knowledge would be both a blessing and a curse. The goddess had chosen them for a reason, and now they would discover what destiny had in store.",
+                "After the accident, {protagonist} expected darkness. Instead, they awakened in a fantasy world as the legendary {class}. '{dialogue}' they said, examining their new abilities. The transformation had been complete—their body felt stronger, more agile, and their mind buzzed with knowledge of spells and combat techniques that had never existed in their previous life. The world around them was breathtaking, filled with magical creatures, ancient ruins, and mysteries waiting to be solved. But with great power came great responsibility, and they would soon learn that being the chosen one meant facing challenges that would test not just their new abilities, but their very soul.",
+                "The goddess smiled as she explained the situation to {protagonist}. '{dialogue}' she said, offering them incredible cheat abilities. The divine power coursed through their veins, granting them abilities that would make them nearly invincible in this world. But power alone wasn't enough—they would need wisdom, courage, and the strength to make difficult choices. The goddess had seen something special in them, something that made them worthy of this second chance at life. Now it was up to them to prove that her faith had been well-placed, and to use their incredible gifts to make this world a better place for everyone."
             ],
             "mecha": [
                 "The massive hangar doors opened, revealing {protagonist}'s giant robot against the starlit sky. '{dialogue}' they declared through the communication system. Earth's last line of defense stood ready.",
@@ -423,7 +739,7 @@ class AnimeStoryGenerator:
         
         return f"Based on your idea: \"{prompt}\"\n\n{story}"
 
-    def generate_story(self, prompt: str, genre: str, max_length: int = 200) -> Dict:
+    def generate_story(self, prompt: str, genre: str, max_length: int = 500) -> Dict:
         """Generate story with multiple API fallbacks - upgraded models"""
         genre_info = self.genres.get(genre, self.genres["shonen"])
         
@@ -457,11 +773,11 @@ def main():
     # Initialize generator
     generator = AnimeStoryGenerator()
     
-    # Header
+    # Beautiful Header
     st.markdown("""
-    <div style="text-align: center; padding: 2rem 0;">
-        <h1 style="font-size: 4rem; background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4ecdc4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem;">🎌 ANIME STORY GENERATOR 🎌</h1>
-        <p style="font-size: 1.3rem; opacity: 0.9;">Generate Epic Anime Stories with AI Power</p>
+    <div class="main-header">
+        <h1>🎌 ANIME STORY GENERATOR 🎌</h1>
+        <p>Generate Epic Anime Stories with AI Power</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -475,7 +791,7 @@ def main():
         
         # Generation Settings
         st.markdown("#### 🎛️ Generation Settings")
-        max_length = st.slider("Max Length", 50, 500, 200)
+        max_length = st.slider("Max Length", 100, 1000, 500)
         temperature = st.slider("Creativity", 0.1, 1.0, 0.8)
         
         # About section
@@ -490,7 +806,12 @@ def main():
         All APIs are free to use!
         """)
     
-    # Main content area
+    # Main content area with beautiful layout
+    st.markdown('<div class="main-content">', unsafe_allow_html=True)
+    
+    # Story form section
+    st.markdown('<div class="story-form">', unsafe_allow_html=True)
+    
     col1, col2 = st.columns([2, 1])
     
     with col1:
@@ -503,10 +824,10 @@ def main():
             help="Describe the beginning of your anime story"
         )
         
-        # Genre selection
+        # Genre selection with beautiful cards
         st.markdown("### 🎭 Choose Your Genre")
         
-        # Create genre selection
+        # Create genre selection with custom styling
         selected_genre = st.radio(
             "Select Genre:",
             options=list(generator.genres.keys()),
@@ -531,29 +852,39 @@ def main():
                     generation_time = end_time - start_time
                     
                     if result["success"]:
-                        # Display story
+                        # Display story with beautiful styling
                         st.markdown("### 📖 Generated Story")
                         st.markdown(f"""
-                        <div class="story-container">
-                            <p style="line-height: 1.8; font-size: 1.1rem;">{result['text']}</p>
+                        <div class="story-output">
+                            <div class="story-text">{result['text']}</div>
                         </div>
                         """, unsafe_allow_html=True)
                         
-                        # Display metrics
+                        # Display metrics with beautiful styling
                         word_count = len(result['text'].split())
                         token_count = int(word_count * 1.3)
                         tokens_per_sec = int(token_count / generation_time) if generation_time > 0 else 0
                         
-                        col1, col2, col3, col4 = st.columns(4)
-                        
-                        with col1:
-                            st.metric("📊 Tokens", token_count)
-                        with col2:
-                            st.metric("⏱️ Time", f"{generation_time:.2f}s")
-                        with col3:
-                            st.metric("🚀 Speed", f"{tokens_per_sec} tok/s")
-                        with col4:
-                            st.metric("🤖 Provider", result['provider'])
+                        st.markdown(f"""
+                        <div class="metrics">
+                            <div class="metric-card">
+                                <div class="metric-value">{token_count}</div>
+                                <div class="metric-label">📊 Tokens</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">{generation_time:.2f}s</div>
+                                <div class="metric-label">⏱️ Time</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">{tokens_per_sec}</div>
+                                <div class="metric-label">🚀 Tokens/sec</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">{result['provider'][:10]}...</div>
+                                <div class="metric-label">🤖 Provider</div>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
                         
                         # Success message
                         st.success(f"✅ Story generated successfully using {result['provider']}!")
@@ -588,12 +919,17 @@ def main():
                 st.session_state.selected_genre = genre_key
                 st.rerun()
     
-    # Footer
+    # Close HTML containers
+    st.markdown('</div>', unsafe_allow_html=True)  # Close story-form
+    st.markdown('</div>', unsafe_allow_html=True)  # Close main-content
+    
+    # Beautiful Footer
     st.markdown("---")
     st.markdown("""
     <div style="text-align: center; padding: 2rem; opacity: 0.7;">
-        <p>🎌 Made with ❤️ for anime storytelling enthusiasts</p>
-        <p>🚀 Powered by free AI APIs • 🌟 Open source on GitHub</p>
+        <p style="font-size: 1.1rem; margin-bottom: 1rem;">🎌 Made with ❤️ for anime storytelling enthusiasts</p>
+        <p style="font-size: 0.9rem;">🚀 Powered by free AI APIs • 🌟 Open source on GitHub</p>
+        <p style="font-size: 0.8rem; margin-top: 1rem;">✨ Generate epic stories with GPT-4, Claude, Llama, and more!</p>
     </div>
     """, unsafe_allow_html=True)
 
