@@ -1041,12 +1041,9 @@ def main():
                 st.session_state.example_prompt = example
                 st.rerun()
         
-        # Quick genre buttons
-        st.markdown("### 🎨 Quick Genre Selection")
-        for genre_key, genre_info in generator.genres.items():
-            if st.button(genre_info["name"], key=f"genre_{genre_key}", use_container_width=True):
-                st.session_state.selected_genre = genre_key
-                st.rerun()
+        # Quick genre selection info
+        st.markdown("### 🎨 Genre Selection")
+        st.info("Use the beautiful genre tablets in the main area to select your preferred anime genre!")
     
     # Close HTML containers
     st.markdown('</div>', unsafe_allow_html=True)  # Close story-form
