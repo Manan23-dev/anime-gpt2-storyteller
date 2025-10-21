@@ -115,7 +115,7 @@ class APITester:
         except Exception as e:
             return {"success": False, "error": str(e)}
     
-    def test_fallback(self) -> Dict:
+    def test_fallback(self, token=None) -> Dict:
         """Test template fallback system"""
         print("🔍 Testing Template Fallback...")
         
