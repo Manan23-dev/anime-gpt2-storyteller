@@ -65,34 +65,27 @@ st.markdown("""
 
 class AnimeStoryGenerator:
     def __init__(self):
-        # Get API tokens safely
-        try:
-            hf_token = st.secrets.get('HUGGINGFACE_TOKEN', 'hf_demo')
-            replicate_token = st.secrets.get('REPLICATE_TOKEN', 'demo')
-            together_token = st.secrets.get('TOGETHER_TOKEN', 'demo')
-        except:
-            # Fallback if secrets file doesn't exist
-            hf_token = 'hf_demo'
-            replicate_token = 'demo'
-            together_token = 'demo'
-        
+        # Initialize with default tokens - will be updated when secrets are available
         self.api_configs = {
             "huggingface": {
                 "url": "https://api-inference.huggingface.co/models/gpt2",
-                "headers": {"Authorization": f"Bearer {hf_token}"},
+                "headers": {"Authorization": "Bearer hf_demo"},
                 "free": True
             },
             "replicate": {
                 "url": "https://api.replicate.com/v1/predictions",
-                "headers": {"Authorization": f"Token {replicate_token}"},
+                "headers": {"Authorization": "Token demo"},
                 "free": True
             },
             "together": {
                 "url": "https://api.together.xyz/inference",
-                "headers": {"Authorization": f"Bearer {together_token}"},
+                "headers": {"Authorization": "Bearer demo"},
                 "free": True
             }
         }
+        
+        # Try to update with real tokens if available
+        self._update_api_tokens()
         
         self.genres = {
             "shonen": {
@@ -127,9 +120,31 @@ class AnimeStoryGenerator:
             }
         }
 
+    def _update_api_tokens(self):
+        """Update API tokens from secrets if available"""
+        try:
+            hf_token = st.secrets.get('HUGGINGFACE_TOKEN', 'hf_demo')
+            replicate_token = st.secrets.get('REPLICATE_TOKEN', 'demo')
+            together_token = st.secrets.get('TOGETHER_TOKEN', 'demo')
+            
+            # Only update if tokens are not default values
+            if hf_token != 'hf_demo':
+                self.api_configs["huggingface"]["headers"]["Authorization"] = f"Bearer {hf_token}"
+            if replicate_token != 'demo':
+                self.api_configs["replicate"]["headers"]["Authorization"] = f"Token {replicate_token}"
+            if together_token != 'demo':
+                self.api_configs["together"]["headers"]["Authorization"] = f"Bearer {together_token}"
+        except:
+            # Secrets not available, use default tokens
+            pass
+
     def generate_with_huggingface(self, prompt: str, max_length: int = 200) -> Dict:
         """Generate story using Hugging Face Inference API"""
         try:
+            # Check if using demo token
+            if "hf_demo" in self.api_configs["huggingface"]["headers"]["Authorization"]:
+                return {"success": False, "error": "Demo token - get real token from huggingface.co/settings/tokens"}
+            
             payload = {
                 "inputs": prompt,
                 "parameters": {
@@ -165,6 +180,10 @@ class AnimeStoryGenerator:
     def generate_with_replicate(self, prompt: str) -> Dict:
         """Generate story using Replicate API"""
         try:
+            # Check if using demo token
+            if "demo" in self.api_configs["replicate"]["headers"]["Authorization"]:
+                return {"success": False, "error": "Demo token - get real token from replicate.com/account/api-tokens"}
+            
             payload = {
                 "version": "replicate/gpt-2:latest",
                 "input": {
