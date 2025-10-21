@@ -65,20 +65,31 @@ st.markdown("""
 
 class AnimeStoryGenerator:
     def __init__(self):
+        # Get API tokens safely
+        try:
+            hf_token = st.secrets.get('HUGGINGFACE_TOKEN', 'hf_demo')
+            replicate_token = st.secrets.get('REPLICATE_TOKEN', 'demo')
+            together_token = st.secrets.get('TOGETHER_TOKEN', 'demo')
+        except:
+            # Fallback if secrets file doesn't exist
+            hf_token = 'hf_demo'
+            replicate_token = 'demo'
+            together_token = 'demo'
+        
         self.api_configs = {
             "huggingface": {
                 "url": "https://api-inference.huggingface.co/models/gpt2",
-                "headers": {"Authorization": f"Bearer {st.secrets.get('HUGGINGFACE_TOKEN', 'hf_demo')}"},
+                "headers": {"Authorization": f"Bearer {hf_token}"},
                 "free": True
             },
             "replicate": {
                 "url": "https://api.replicate.com/v1/predictions",
-                "headers": {"Authorization": f"Token {st.secrets.get('REPLICATE_TOKEN', 'demo')}"},
+                "headers": {"Authorization": f"Token {replicate_token}"},
                 "free": True
             },
             "together": {
                 "url": "https://api.together.xyz/inference",
-                "headers": {"Authorization": f"Bearer {st.secrets.get('TOGETHER_TOKEN', 'demo')}"},
+                "headers": {"Authorization": f"Bearer {together_token}"},
                 "free": True
             }
         }
