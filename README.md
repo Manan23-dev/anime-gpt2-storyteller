@@ -30,15 +30,32 @@ pip install -r requirements.txt
 
 ## 🎯 Quick Start
 
+### 🚀 Deploy with Real AI (Recommended)
+
+```bash
+# 1. Set up API keys (optional - app works without them!)
+python setup_api_keys.py
+
+# 2. Test your APIs
+python test_apis.py
+
+# 3. Run the web app locally
+streamlit run app.py
+
+# 4. Deploy to Streamlit Cloud (FREE!)
+# - Push to GitHub
+# - Go to share.streamlit.io
+# - Deploy your app!
+```
+
+### 🎓 Train Your Own Model
+
 ```bash
 # Train your model
 python train.py
 
-# Generate stories
+# Generate stories locally
 python generate.py
-
-# Run web demo locally
-streamlit run app.py
 ```
 
 ## 🤖 Want Better Models? Here's What You Can Use
@@ -98,39 +115,69 @@ const response = await fetch('https://api.openai.com/v1/chat/completions', {
 });
 ```
 
-## 📈 How to Scale This Application
+## 🚀 Deployment Options
 
-### **🌐 Current: GitHub Pages (Static Demo)**
-- ✅ Free hosting
-- ✅ Global CDN 
+### **⚡ Streamlit Cloud (FREE - Recommended)**
 
+**Perfect for:**
+- ✅ Real AI story generation
+- ✅ Free hosting forever
+- ✅ Automatic deployments
+- ✅ Global CDN
+- ✅ No server maintenance
 
-### **⚡ Level 1: Add Real AI**
+**Deploy in 3 steps:**
 ```bash
-# Deploy on Streamlit Cloud (FREE)
-1. Push to GitHub
-2. Connect streamlit.io
-3. Auto-deploy with real models
-# Result: Live AI generation for free!
+# 1. Push to GitHub
+git add .
+git commit -m "Add Streamlit app"
+git push origin main
+
+# 2. Go to share.streamlit.io
+# 3. Connect GitHub repo and deploy!
 ```
 
-### **🚀 Level 2: Full Web App**
-```bash
-# Deploy on Vercel/Netlify with API routes
-- Real-time AI generation
-- User accounts & saved stories  
-- Custom model training
-- Analytics & usage tracking
-```
+**Add API keys for better performance:**
+- Hugging Face: 1000 requests/month FREE
+- Replicate: $10 credits/month FREE
+- Together AI: $25 credits FREE
 
-### **⚙️ Level 3: Production Scale**
+### **🌐 Hugging Face Spaces (FREE)**
+
+**Perfect for:**
+- ✅ GPU acceleration
+- ✅ Built-in model integration
+- ✅ Easy sharing
+
+**Deploy:**
+1. Go to [huggingface.co/spaces](https://huggingface.co/spaces)
+2. Create new Space with Streamlit SDK
+3. Upload your files
+4. Auto-deploy!
+
+### **☁️ Railway (FREE Tier)**
+
+**Perfect for:**
+- ✅ GitHub integration
+- ✅ Automatic deployments
+- ✅ Custom domains
+
+**Deploy:**
+1. Go to [railway.app](https://railway.app)
+2. Connect GitHub repo
+3. Auto-deploy!
+
+### **📱 Local Development**
+
 ```bash
-# AWS/GCP deployment
-- Auto-scaling servers
-- Load balancing  
-- Database integration
-- CDN for global speed
-- Monitoring & logging
+# Run locally with real AI
+streamlit run app.py
+
+# Test APIs
+python test_apis.py
+
+# Set up API keys
+python setup_api_keys.py
 ```
 
 ## 💡 Cool Use Cases & Applications
