@@ -141,17 +141,17 @@ st.markdown("""
         box-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
     }
     
-    /* Genre selector */
-    .genre-selector {
+    /* Genre tablets with background images */
+    .genre-tablets {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
         margin: 1.5rem 0;
     }
     
-    .genre-card {
+    .genre-tablet {
         position: relative;
-        background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(78, 205,196, 0.3));
+        background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(78, 205, 196, 0.3));
         border: 2px solid rgba(255, 255, 255, 0.2);
         border-radius: 20px;
         padding: 2rem 1.5rem;
@@ -161,66 +161,148 @@ st.markdown("""
         text-align: center;
         font-weight: 600;
         overflow: hidden;
-        min-height: 220px;
+        min-height: 180px;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: center;
         backdrop-filter: blur(10px);
-    }
-    
-    .genre-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        opacity: 0.4;
-        transition: all 0.4s ease;
-        z-index: -1;
-        border-radius: 18px;
     }
     
-    .genre-card:hover {
+    /* Individual genre backgrounds */
+    .genre-tablet[data-genre="shonen"] {
+        background-image: 
+            linear-gradient(rgba(255, 107, 107, 0.5), rgba(255, 107, 107, 0.7)),
+            url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop');
+    }
+    
+    .genre-tablet[data-genre="action"] {
+        background-image: 
+            linear-gradient(rgba(139, 0, 139, 0.5), rgba(75, 0, 130, 0.7)),
+            url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop');
+    }
+    
+    .genre-tablet[data-genre="isekai"] {
+        background-image: 
+            linear-gradient(rgba(0, 191, 255, 0.5), rgba(50, 205, 50, 0.7)),
+            url('https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop');
+    }
+    
+    .genre-tablet[data-genre="mecha"] {
+        background-image: 
+            linear-gradient(rgba(70, 130, 180, 0.5), rgba(0, 191, 255, 0.7)),
+            url('https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop');
+    }
+    
+    .genre-tablet[data-genre="romance"] {
+        background-image: 
+            linear-gradient(rgba(255, 182, 193, 0.5), rgba(255, 105, 180, 0.7)),
+            url('https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop');
+    }
+    
+    .genre-tablet[data-genre="slice"] {
+        background-image: 
+            linear-gradient(rgba(210, 180, 140, 0.5), rgba(139, 90, 43, 0.7)),
+            url('https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop');
+    }
+    
+    .genre-tablet:hover {
         border-color: #ff6b6b;
         transform: scale(1.05) translateY(-8px);
         box-shadow: 0 25px 50px rgba(255, 107, 107, 0.5);
     }
     
-    .genre-card:hover::before {
-        opacity: 0.7;
-        transform: scale(1.1);
-    }
-    
-    .genre-card.selected {
+    .genre-tablet.selected {
         background: linear-gradient(45deg, rgba(255, 107, 107, 0.8), rgba(255, 142, 83, 0.8));
         border-color: #ff6b6b;
         box-shadow: 0 20px 60px rgba(255, 107, 107, 0.6);
         transform: scale(1.02);
     }
     
-    .genre-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-    }
-    
-    .genre-name {
-        font-size: 1.3rem;
+    .genre-tablet-text {
+        position: relative;
+        z-index: 2;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        font-size: 1.1rem;
         font-weight: 700;
-        margin-bottom: 0.8rem;
-        color: #ffd93d;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
     }
     
-    .genre-desc {
-        font-size: 0.9rem;
-        opacity: 0.95;
-        line-height: 1.4;
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+    /* Button styling for genre tablets */
+    .stButton > button {
+        background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(78, 205, 196, 0.3));
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        color: white;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 1.5rem;
+        min-height: 120px;
+        transition: all 0.4s ease;
+        backdrop-filter: blur(10px);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stButton > button:hover {
+        border-color: #ff6b6b;
+        transform: scale(1.05) translateY(-5px);
+        box-shadow: 0 20px 40px rgba(255, 107, 107, 0.4);
+    }
+    
+    .stButton > button:active {
+        transform: scale(0.98);
+    }
+    
+    /* Specific button backgrounds */
+    .stButton > button[data-testid*="genre_shonen"] {
+        background-image: 
+            linear-gradient(rgba(255, 107, 107, 0.6), rgba(255, 107, 107, 0.8)),
+            url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop');
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .stButton > button[data-testid*="genre_action"] {
+        background-image: 
+            linear-gradient(rgba(139, 0, 139, 0.6), rgba(75, 0, 130, 0.8)),
+            url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop');
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .stButton > button[data-testid*="genre_isekai"] {
+        background-image: 
+            linear-gradient(rgba(0, 191, 255, 0.6), rgba(50, 205, 50, 0.8)),
+            url('https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop');
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .stButton > button[data-testid*="genre_mecha"] {
+        background-image: 
+            linear-gradient(rgba(70, 130, 180, 0.6), rgba(0, 191, 255, 0.8)),
+            url('https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop');
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .stButton > button[data-testid*="genre_romance"] {
+        background-image: 
+            linear-gradient(rgba(255, 182, 193, 0.6), rgba(255, 105, 180, 0.8)),
+            url('https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop');
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .stButton > button[data-testid*="genre_slice"] {
+        background-image: 
+            linear-gradient(rgba(210, 180, 140, 0.6), rgba(139, 90, 43, 0.8)),
+            url('https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop');
+        background-size: cover;
+        background-position: center;
     }
     
     /* Generate button */
@@ -824,20 +906,67 @@ def main():
             help="Describe the beginning of your anime story"
         )
         
-        # Genre selection with beautiful cards
+        # Genre selection with beautiful tablets
         st.markdown("### 🎭 Choose Your Genre")
         
-        # Create genre selection with custom styling
-        selected_genre = st.radio(
-            "Select Genre:",
-            options=list(generator.genres.keys()),
-            format_func=lambda x: generator.genres[x]["name"],
-            horizontal=False
-        )
+        # Create genre tablets with background images
+        genre_tablets = st.columns(3)
         
-        # Display genre description
+        genre_options = list(generator.genres.keys())
+        
+        # First row of tablets
+        with genre_tablets[0]:
+            if st.button("⚔️ SHONEN HEROES", key="genre_shonen", use_container_width=True):
+                st.session_state.selected_genre = "shonen"
+                st.rerun()
+        
+        with genre_tablets[1]:
+            if st.button("🔥 DEMON SLAYERS", key="genre_action", use_container_width=True):
+                st.session_state.selected_genre = "action"
+                st.rerun()
+        
+        with genre_tablets[2]:
+            if st.button("🌍 ISEKAI WORLDS", key="genre_isekai", use_container_width=True):
+                st.session_state.selected_genre = "isekai"
+                st.rerun()
+        
+        # Second row of tablets
+        genre_tablets2 = st.columns(3)
+        
+        with genre_tablets2[0]:
+            if st.button("🤖 MECHA PILOTS", key="genre_mecha", use_container_width=True):
+                st.session_state.selected_genre = "mecha"
+                st.rerun()
+        
+        with genre_tablets2[1]:
+            if st.button("💕 SHOJO ROMANCE", key="genre_romance", use_container_width=True):
+                st.session_state.selected_genre = "romance"
+                st.rerun()
+        
+        with genre_tablets2[2]:
+            if st.button("☕ SLICE OF LIFE", key="genre_slice", use_container_width=True):
+                st.session_state.selected_genre = "slice"
+                st.rerun()
+        
+        # Get selected genre
+        selected_genre = st.session_state.get('selected_genre', 'shonen')
+        
+        # Display selected genre with visual indicator
         genre_info = generator.genres[selected_genre]
-        st.markdown(f"**{genre_info['name']}**: {genre_info['description']}")
+        
+        # Show selected genre with beautiful styling
+        st.markdown(f"""
+        <div style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(78, 205, 196, 0.2)); 
+                    padding: 1rem; border-radius: 15px; border-left: 5px solid #ff6b6b; 
+                    margin: 1rem 0; backdrop-filter: blur(10px);">
+            <h4 style="color: #ffd93d; margin: 0; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);">
+                {genre_info['name']}
+            </h4>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);">
+                {genre_info['description']}
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
         
         # Generate button
         if st.button("🚀 GENERATE EPIC STORY", type="primary", use_container_width=True):
