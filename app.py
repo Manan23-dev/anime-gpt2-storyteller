@@ -67,20 +67,43 @@ class AnimeStoryGenerator:
     def __init__(self):
         # Initialize with default tokens - will be updated when secrets are available
         self.api_configs = {
+            # Free APIs
             "huggingface": {
-                "url": "https://api-inference.huggingface.co/models/gpt2",
+                "url": "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium",
                 "headers": {"Authorization": "Bearer hf_demo"},
-                "free": True
+                "free": True,
+                "model": "DialoGPT"
+            },
+            "huggingface_llama": {
+                "url": "https://api-inference.huggingface.co/models/meta-llama/Llama-2-7b-chat-hf",
+                "headers": {"Authorization": "Bearer hf_demo"},
+                "free": True,
+                "model": "Llama-2"
             },
             "replicate": {
                 "url": "https://api.replicate.com/v1/predictions",
                 "headers": {"Authorization": "Token demo"},
-                "free": True
+                "free": True,
+                "model": "GPT-2"
             },
             "together": {
                 "url": "https://api.together.xyz/inference",
                 "headers": {"Authorization": "Bearer demo"},
-                "free": True
+                "free": True,
+                "model": "Llama-3"
+            },
+            # Premium APIs (better quality)
+            "openai": {
+                "url": "https://api.openai.com/v1/chat/completions",
+                "headers": {"Authorization": "Bearer demo"},
+                "free": False,
+                "model": "GPT-4o-mini"
+            },
+            "anthropic": {
+                "url": "https://api.anthropic.com/v1/messages",
+                "headers": {"Authorization": "Bearer demo"},
+                "free": False,
+                "model": "Claude-3.5-Sonnet"
             }
         }
         
@@ -123,17 +146,30 @@ class AnimeStoryGenerator:
     def _update_api_tokens(self):
         """Update API tokens from secrets if available"""
         try:
+            # Free APIs
             hf_token = st.secrets.get('HUGGINGFACE_TOKEN', 'hf_demo')
             replicate_token = st.secrets.get('REPLICATE_TOKEN', 'demo')
             together_token = st.secrets.get('TOGETHER_TOKEN', 'demo')
             
-            # Only update if tokens are not default values
+            # Premium APIs
+            openai_token = st.secrets.get('OPENAI_API_KEY', 'demo')
+            anthropic_token = st.secrets.get('ANTHROPIC_API_KEY', 'demo')
+            
+            # Update free API tokens
             if hf_token != 'hf_demo':
                 self.api_configs["huggingface"]["headers"]["Authorization"] = f"Bearer {hf_token}"
+                self.api_configs["huggingface_llama"]["headers"]["Authorization"] = f"Bearer {hf_token}"
             if replicate_token != 'demo':
                 self.api_configs["replicate"]["headers"]["Authorization"] = f"Token {replicate_token}"
             if together_token != 'demo':
                 self.api_configs["together"]["headers"]["Authorization"] = f"Bearer {together_token}"
+            
+            # Update premium API tokens
+            if openai_token != 'demo':
+                self.api_configs["openai"]["headers"]["Authorization"] = f"Bearer {openai_token}"
+            if anthropic_token != 'demo':
+                self.api_configs["anthropic"]["headers"]["Authorization"] = f"Bearer {anthropic_token}"
+                
         except:
             # Secrets not available, use default tokens
             pass
@@ -213,6 +249,123 @@ class AnimeStoryGenerator:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
+    def generate_with_openai(self, prompt: str, genre: str) -> Dict:
+        """Generate story using OpenAI GPT-4o-mini"""
+        try:
+            if "demo" in self.api_configs["openai"]["headers"]["Authorization"]:
+                return {"success": False, "error": "Demo token - get real token from platform.openai.com/api-keys"}
+            
+            payload = {
+                "model": "gpt-4o-mini",
+                "messages": [
+                    {
+                        "role": "system", 
+                        "content": f"You are an expert anime storyteller specializing in {genre} genre. Create engaging, authentic anime stories with proper pacing, character development, and genre-appropriate elements."
+                    },
+                    {
+                        "role": "user", 
+                        "content": f"Write an anime {genre} story based on this prompt: {prompt}. Make it engaging and authentic to the genre."
+                    }
+                ],
+                "max_tokens": 300,
+                "temperature": 0.8
+            }
+            
+            response = requests.post(
+                self.api_configs["openai"]["url"],
+                headers=self.api_configs["openai"]["headers"],
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                return {
+                    "success": True,
+                    "text": result["choices"][0]["message"]["content"],
+                    "provider": "OpenAI GPT-4o-mini"
+                }
+            
+            return {"success": False, "error": f"API Error: {response.status_code}"}
+            
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def generate_with_claude(self, prompt: str, genre: str) -> Dict:
+        """Generate story using Anthropic Claude"""
+        try:
+            if "demo" in self.api_configs["anthropic"]["headers"]["Authorization"]:
+                return {"success": False, "error": "Demo token - get real token from console.anthropic.com"}
+            
+            payload = {
+                "model": "claude-3-5-sonnet-20241022",
+                "max_tokens": 300,
+                "messages": [
+                    {
+                        "role": "user", 
+                        "content": f"Write an engaging anime {genre} story based on this prompt: {prompt}. Make it authentic to the genre with proper pacing and character development."
+                    }
+                ]
+            }
+            
+            response = requests.post(
+                self.api_configs["anthropic"]["url"],
+                headers=self.api_configs["anthropic"]["headers"],
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                return {
+                    "success": True,
+                    "text": result["content"][0]["text"],
+                    "provider": "Claude-3.5-Sonnet"
+                }
+            
+            return {"success": False, "error": f"API Error: {response.status_code}"}
+            
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def generate_with_llama(self, prompt: str, genre: str) -> Dict:
+        """Generate story using Llama-2 via Hugging Face"""
+        try:
+            if "hf_demo" in self.api_configs["huggingface_llama"]["headers"]["Authorization"]:
+                return {"success": False, "error": "Demo token - get real token from huggingface.co/settings/tokens"}
+            
+            payload = {
+                "inputs": f"<s>[INST] Write an anime {genre} story based on: {prompt} [/INST]",
+                "parameters": {
+                    "max_length": 300,
+                    "temperature": 0.8,
+                    "top_p": 0.95,
+                    "do_sample": True,
+                    "return_full_text": False
+                }
+            }
+            
+            response = requests.post(
+                self.api_configs["huggingface_llama"]["url"],
+                headers=self.api_configs["huggingface_llama"]["headers"],
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                if isinstance(result, list) and len(result) > 0:
+                    return {
+                        "success": True,
+                        "text": result[0].get("generated_text", ""),
+                        "provider": "Llama-2"
+                    }
+            
+            return {"success": False, "error": f"API Error: {response.status_code}"}
+            
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
     def generate_fallback_story(self, prompt: str, genre: str) -> str:
         """Generate a fallback story using templates when APIs fail"""
         templates = {
@@ -271,19 +424,21 @@ class AnimeStoryGenerator:
         return f"Based on your idea: \"{prompt}\"\n\n{story}"
 
     def generate_story(self, prompt: str, genre: str, max_length: int = 200) -> Dict:
-        """Generate story with multiple API fallbacks"""
+        """Generate story with multiple API fallbacks - upgraded models"""
         genre_info = self.genres.get(genre, self.genres["shonen"])
-        full_prompt = f"{genre_info['prompt_prefix']} {prompt}"
         
-        # Try APIs in order of preference
+        # Try APIs in order of quality (best first)
         apis_to_try = [
-            ("huggingface", self.generate_with_huggingface),
-            ("replicate", self.generate_with_replicate),
+            ("openai", lambda p, g: self.generate_with_openai(prompt, genre)),
+            ("claude", lambda p, g: self.generate_with_claude(prompt, genre)),
+            ("llama", lambda p, g: self.generate_with_llama(prompt, genre)),
+            ("huggingface", lambda p, g: self.generate_with_huggingface(f"{genre_info['prompt_prefix']} {prompt}", max_length)),
+            ("replicate", lambda p, g: self.generate_with_replicate(f"{genre_info['prompt_prefix']} {prompt}")),
         ]
         
         for api_name, api_func in apis_to_try:
             try:
-                result = api_func(full_prompt, max_length)
+                result = api_func(prompt, genre)
                 if result["success"]:
                     return result
             except Exception as e:
