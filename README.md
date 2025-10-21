@@ -3,7 +3,7 @@
 [![Live Demo](https://img.shields.io/badge/🚀_Try_Demo-Live_Now-ff6b6b?style=for-the-badge)](https://manan23-dev.github.io/anime-gpt2-storyteller/)
 [![GitHub](https://img.shields.io/badge/📂_Source-GitHub-4ecdc4?style=for-the-badge)](https://github.com/Manan23-dev/anime-gpt2-storyteller)
 
-A PyTorch-based GPT-2 model with 200M parameters fine-tuned for generating anime narratives. **[Try the live demo!]([https://manan23-dev.github.io/anime-gpt2-storyteller/](https://manan23-dev-4a2r3ablbpih72jjz46tkb.streamlit.app/)**
+A PyTorch-based GPT-2 model with 200M parameters fine-tuned for generating anime narratives. **[Try the live demo!](https://manan23-dev-4a2r3ablbpih72jjz46tkb.streamlit.app/)**
 
 ## 🚀 Features
 
